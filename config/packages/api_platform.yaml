@@ -1,0 +1,42 @@
+api_platform:
+    title: Hello API Platform
+    version: 1.0.0
+    enable_re_doc: true
+    enable_swagger_ui: true
+    enable_docs: true    
+    enable_swagger: true
+
+    eager_loading:
+        max_joins: 50
+
+    formats:
+        json: ['application/json']
+        jsonld: ['application/ld+json']
+
+    defaults:
+        stateless: true
+        mapping:
+        #paths: ['%kernel.project_dir%/src/Entity', '%kernel.project_dir%/src/Dto']
+        validation: true
+        cache_headers:
+            max_age: 0
+            shared_max_age: 0
+            vary: ['Content-Type', 'Authorization', 'Origin']
+            private: true
+        jsonld_context:
+            url: 'context/asset-register.json'
+        pagination_enabled: false
+        normalization_context:
+            enable_max_depth: true
+            skip_null_values: false
+
+        serializer:
+            enable_max_depth: true
+        route_not_found_strategy: ~ 
+        url_generation_strategy: 1
+
+    swagger:
+        api_keys:
+          JWT:
+            name: Authorization
+            type: header

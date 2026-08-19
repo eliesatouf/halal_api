@@ -1,0 +1,94 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        # IMPORTANT: Configure your server version
+        server_version: '8.0' # Change to match your MySQL version
+        keep_slave: false
+        keep_replica: false
+        options:
+            !php/const PDO::ATTR_PERSISTENT: false
+            !php/const PDO::ATTR_TIMEOUT: 5
+            !php/const PDO::MYSQL_ATTR_USE_BUFFERED_QUERY: true
+
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App
+        
+        # Metadata cache (class metadata)
+        metadata_cache_driver:
+            type: pool
+            pool: doctrine.metadata_cache_pool
+
+        # Query cache (DQL to SQL conversions)
+        query_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool
+
+        # Result cache (query results)
+        result_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool
+
+        second_level_cache:
+            enabled: true
+            log_enabled: true  # Helpful for debugging
+            region_cache_driver:
+                type: pool
+                pool: doctrine.second_level_cache_pool
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            metadata_cache_driver:
+                type: pool
+                pool: doctrine.metadata_cache_pool
+            query_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+when@dev:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: true
+            # In dev, use array cache (cleared on each request) to avoid stale metadata issues
+            metadata_cache_driver:
+                type: pool
+                pool: doctrine.metadata_cache_pool
+            query_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        orm:
+            metadata_cache_driver:
+                type: pool
+                pool: doctrine.metadata_cache_pool
+            query_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool

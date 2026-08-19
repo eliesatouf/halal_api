@@ -1,0 +1,43 @@
+framework:
+    cache:
+        # Unique name of your app: used to compute stable namespaces for cache keys.
+        prefix_seed: 'sandys_api'
+        
+        # The "app" cache stores to APCu
+        app: cache.adapter.apcu
+        
+        # System cache for Symfony core
+        system: cache.adapter.system
+        
+        # Directory for serialized cache files (fallback when APCu isn't available)
+        directory: '%kernel.cache_dir%/pools'
+
+        # Namespaced pools
+        pools:
+            doctrine.second_level_cache_pool:
+                adapter: cache.adapter.apcu  # Uses APCu
+                default_lifetime: 3600  # 1 hour default
+                
+            # Settings cache
+            settings.cache:
+                adapter: cache.adapter.apcu
+                default_lifetime: 3600
+
+            # Doctrine metadata cache (class metadata - rarely changes)
+            doctrine.metadata_cache_pool:
+                adapter: cache.adapter.apcu
+                default_lifetime: 86400 # 24 hours
+
+            # Doctrine query/result cache (more frequent changes)
+            doctrine.result_cache_pool:
+                adapter: cache.adapter.apcu
+                default_lifetime: 3600 # 1 hour
+
+            # System cache pool for Symfony/Doctrine internals
+            doctrine.system_cache_pool:
+                adapter: cache.adapter.apcu
+                default_lifetime: 86400 # 24 hours
+
+            homepage.cache:
+                adapter: cache.adapter.apcu
+                default_lifetime: 300

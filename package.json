@@ -1,0 +1,11 @@
+{
+    "require": {
+        "php": "^8.3",
+        "symfony/symfony": "^7.2",
+        "doctrine/doctrine-bundle": "^2.10",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "doctrine/orm": "^2.18",
+        "doctrine/dbal": "^3.8"
+    }
+}
