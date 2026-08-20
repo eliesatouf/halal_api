@@ -44,7 +44,7 @@ class Category
     #[Groups(['category:read', 'menu_item:read' , 'dish:read','homepage:read', 'homepage:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50, unique: true)]
+    #[ORM\Column(length: 50, unique: true, nullable: true)]
     #[Groups(['category:read', 'category:write', 'menu_item:read' , 'dish:read', 'dish:write' ,'homepage:read'])]
     private ?string $slug = null;
 
@@ -90,6 +90,7 @@ class Category
 
     public function getSlug(): ?string
     {
+        $this->slug = $slug === '' ? null : $slug;
         return $this->slug;
     }
 
