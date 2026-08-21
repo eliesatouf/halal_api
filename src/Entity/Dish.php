@@ -227,7 +227,7 @@ class Dish
     {
         if( $this->getVariants())
         {
-            $varPrice = array_search($variantId, $this->gteVariants());
+            $varPrice = array_search($variantId, $this->getVariants());
             $this->setPrice($varPrice );
         }
         
