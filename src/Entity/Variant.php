@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,10 +21,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(),
         new Post(security: 'is_granted("ROLE_ADMIN")'),
         new Patch(security: 'is_granted("ROLE_ADMIN")'),
+        new Delete(security: 'is_granted("ROLE_ADMIN")'),
 
     ],
     normalizationContext: ['groups' => ['variant:read', 'homepage:read']],
-    denormalizationContext: ['groups' => ['variant:write']]
+    denormalizationContext: ['groups' => ['variant:write', 'dish:write']]
 )]
 
 #[ORM\Entity(repositoryClass: VariantRepository::class)]
