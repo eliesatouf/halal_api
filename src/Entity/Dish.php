@@ -225,8 +225,12 @@ class Dish
     #[Groups(['dish:read','dish:write','offer:write'])]
     public function setPriceFromVariant($variantId)
     {
-        $varPrice = array_search($variantId, $this->gteVariants());
-        $this->setPrice($varPrice );
+        if( $this->gteVariants())
+        {
+            $varPrice = array_search($variantId, $this->gteVariants());
+            $this->setPrice($varPrice );
+        }
+        
     }
 
 
