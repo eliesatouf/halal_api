@@ -223,16 +223,24 @@ class Dish
     }
 
     #[Groups(['dish:read','dish:write','offer:write'])]
-    public function setPriceFromVariant($variantId)
+    public function setPriceFromVariant(int $variantId): void
     {
-        if( $this->getVariants())
-        {
-            $varPrice = array_search($variantId, $this->getVariants());
-            $this->setPrice($varPrice );
+        $variants = $this->getVariants();
+        
+        if ($variants->isEmpty()) {
+            return;
         }
         
+        foreach ($variants as $variant) {
+            if ($variant->getId() === $variantId) {
+                $this->setPrice($variant->getPrice());
+                return;
+            }
+        }
+        
+        // Optional: Log that variant wasn't found
+        // $logger->warning("Variant with ID $variantId not found for dish {$this->getId()}");
     }
-
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
