@@ -19,6 +19,7 @@ use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 
 
 #[ApiFilter(BooleanFilter::class, properties: ['isActive'])]
+#[ORM\HasLifecycleCallbacks]
 
 #[ORM\Entity]
 #[ORM\Cache(usage: 'NONSTRICT_READ_WRITE', region: 'categories')] 
@@ -73,6 +74,10 @@ class Category
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $syncStatus = null;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['dish:read','dish:write', 'homepage:read'])]
+    private ?\DateTime $updatedOn = null;
+
     public function __construct()
     {
         $this->dishes = new ArrayCollection();
@@ -84,10 +89,10 @@ class Category
         return $this->id;
     }
 
-    public function getSlug(): ?string
+
+    public function getName(): ?string
     {
-        $this->slug = $slug === '' ? null : $slug;
-        return $this->slug;
+        return $this->name;
     }
 
     public function setName(string $name): self
@@ -190,6 +195,25 @@ class Category
         $this->syncStatus = $syncStatus;
 
         return $this;
+    }
+
+    public function getUpdatedOn(): ?\DateTime
+    {
+        return $this->updatedOn;
+    }
+
+    public function setUpdatedOn(?\DateTime $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
+    {
+        $this->updatedOn = new \DateTime();
     }
 
 }
