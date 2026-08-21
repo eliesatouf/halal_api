@@ -223,10 +223,16 @@ class Dish
     }
 
     #[Groups(['dish:read','dish:write','offer:write'])]
-    public function setPriceFromVariant(int $variantId): void
+    public function setPriceFromVariant(?int $variantId): void
     {
+        // If no variant ID provided or no variants exist, do nothing
+        if ($variantId === null) {
+            return;
+        }
+        
         $variants = $this->getVariants();
         
+        // If dish has no variants, just return
         if ($variants->isEmpty()) {
             return;
         }
@@ -237,9 +243,6 @@ class Dish
                 return;
             }
         }
-        
-        // Optional: Log that variant wasn't found
-        // $logger->warning("Variant with ID $variantId not found for dish {$this->getId()}");
     }
 
     #[ORM\PrePersist]
