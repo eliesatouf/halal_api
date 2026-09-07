@@ -58,29 +58,29 @@ final class RegisterUserProcessor implements ProcessorInterface
         }
 
         // 4. Sync customer to Loyverse (AFTER persistence)
-        // if($localAccount=== false)
-        // {
-        //     try {
-        //         $this->logger->info('Syncing new customer to Loyverse', [
-        //             'customer_id' => $customer->getId(),
-        //             'email' => $customer->getEmail()
-        //         ]);
+        if($localAccount=== false)
+        {
+            try {
+                $this->logger->info('Syncing new customer to Loyverse', [
+                    'customer_id' => $customer->getId(),
+                    'email' => $customer->getEmail()
+                ]);
                 
-        //         $syncResult = $this->loyverseSyncService->syncCustomerToLoyverse($customer);
+                $syncResult = $this->loyverseSyncService->syncCustomerToLoyverse($customer);
                 
-        //         if ($syncResult) {
-        //             $this->logger->info('Customer synced to Loyverse successfully');
-        //         } else {
-        //             $this->logger->warning('Failed to sync customer to Loyverse, but registration succeeded');
-        //             // Don't fail registration if Loyverse sync fails
-        //         }
-        //     } catch (\Exception $e) {
-        //         $this->logger->error('Exception syncing customer to Loyverse', [
-        //             'error' => $e->getMessage()
-        //         ]);
-        //         // Continue - don't fail registration
-        //     }
-        // }
+                if ($syncResult) {
+                    $this->logger->info('Customer synced to Loyverse successfully');
+                } else {
+                    $this->logger->warning('Failed to sync customer to Loyverse, but registration succeeded');
+                    // Don't fail registration if Loyverse sync fails
+                }
+            } catch (\Exception $e) {
+                $this->logger->error('Exception syncing customer to Loyverse', [
+                    'error' => $e->getMessage()
+                ]);
+                // Continue - don't fail registration
+            }
+        }
 
         return $result;
     }
