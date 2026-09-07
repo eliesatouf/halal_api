@@ -19,7 +19,7 @@ services:
     App\State\RegisterUserProcessor:
         arguments:
             $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-            $loyverseSyncService: '@App\Service\LoyverseSyncService' # Add this
+            #$loyverseSyncService: '@App\Service\LoyverseSyncService' # Add this
         tags: [ 'api_platform.state_processor' ]
         public: true
             

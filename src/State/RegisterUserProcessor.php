@@ -9,7 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Service\LoyverseSyncService;
+//use App\Service\LoyverseSyncService;
 
 final class RegisterUserProcessor implements ProcessorInterface
 {
@@ -18,7 +18,7 @@ final class RegisterUserProcessor implements ProcessorInterface
         private ProcessorInterface $persistProcessor,
         private LoggerInterface $logger,
         private UserPasswordHasherInterface $passwordHasher,
-        private LoyverseSyncService $loyverseSyncService // Add this
+        //private LoyverseSyncService $loyverseSyncService // Add this
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
@@ -57,7 +57,7 @@ final class RegisterUserProcessor implements ProcessorInterface
             throw new \RuntimeException('Persistence failed');
         }
 
-        // 4. Sync customer to Loyverse (AFTER persistence)
+        //4. Sync customer to Loyverse (AFTER persistence)
         // if($localAccount=== false)
         // {
         //     try {
