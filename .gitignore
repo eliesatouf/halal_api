@@ -20,3 +20,5 @@
 ###< phpunit/phpunit ###
 public/shared/
 mercure
+
+/config/packages/doctrine.yaml
