@@ -1,10 +1,10 @@
 <?php
-
 namespace App\EventSubscriber;
 
 use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 
+#[AsEventListener(event: 'kernel.request', priority: 20)]
 class JWTPayloadEnhancer
 {
     public function onJWTCreated(JWTCreatedEvent $event): void
