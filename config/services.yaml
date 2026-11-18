@@ -48,27 +48,12 @@ services:
         class: App\Filter\CustomerSearchFilter
         tags: ['api_platform.filter']
 
-    App\State\OrderProcessor:
-        bind:
-            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-        tags:
-            - { name: api_platform.state_processor }
-
-    App\Filter\CustomerOrderFilter:
-        tags:
-            - { name: api_platform.filter }
-
     App\State\CustomerStateProcessor:
         bind:
             $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
         tags:
             - { name: api_platform.state_processor }
 
-    App\State\BundleProcessor:
-        bind:
-            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-        tags:
-            - { name: api_platform.state_processor }
 
     # App\State\OrderBogoProcessor:
     #     bind:
@@ -95,34 +80,8 @@ services:
             $passwordHasher: '@security.user_password_hasher'
         tags:
             - { name: 'api_platform.state_processor', priority: 10 }
-            
-    App\State\OfferProcessor:
-        arguments:
-            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-            $offerTypeRepository: '@App\Repository\OfferTypeRepository'
-            $strategies: !tagged_iterator app.offer_strategy
-            $entityManager: '@doctrine.orm.entity_manager'
-            $orderEmailService: '@App\Service\OrderEmailService'
-            $loyverseSyncService: '@App\Service\LoyverseSyncService'
-        tags: ['api_platform.state_processor']      
 
-    # Offer Strategies
-    App\Service\OfferStrategy\BogoStrategy:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-        tags: ['app.offer_strategy']
 
-    App\Service\OfferStrategy\BundleStrategy:
-        tags: [ 'app.offer_strategy' ]
-        
-    App\Service\OfferStrategy\DiscountStrategy:
-        tags: [ 'app.offer_strategy' ]
-
-    App\Service\OfferStrategy\BuyXGetYStrategy:
-        tags: [ 'app.offer_strategy' ]
-        
-    App\Service\OfferStrategy\FirstOrderDiscountStrategy:
-        tags: ['app.offer_strategy']
     
     # Order Email Service
     App\Service\OrderEmailService:
@@ -130,52 +89,10 @@ services:
             $mailer: '@mailer'
             $twig: '@twig'
 
-    tagged_iterator.app.offer_strategy:
-        class: 'iterable'
-        factory: ['@service_container', 'get']
-        arguments: ['tagged_iterator app.offer_strategy']
-
-    App\Controller\OrderPreviewController:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-            $serializer: '@serializer'
-            $logger: '@logger'
-            $strategies: !tagged_iterator 'app.offer_strategy'
-        tags: ['controller.service_arguments']
-
-    App\EventSubscriber\OfferApiSubscriber:
-        arguments:
-            $offerTypeRepository: '@App\Repository\OfferTypeRepository'
-        tags:
-            - { name: kernel.event_subscriber }
-
-
-    App\Service\DiningSalesReportGenerator:
-        arguments:
-            $orderRepository: '@App\Repository\OrderRepository'
-            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
 
     App\EventSubscriber\JWTPayloadEnhancer:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
-
-    App\Service\LoyverseSyncService:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-            $logger: '@logger'
-        public: true
-        
-    App\State\TableReservationProcessor:
-        arguments:
-            $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
-        tags:
-            - name: api_platform.state_processor
-              processor: 'table_reservation.processor'
-
-    App\Entity\TableReservation:
-        tags:
-            - name: api_platform.state_processor
-              processor: 'table_reservation.processor'
 
     App\State\CompleteAppointmentProcessor:
         bind:
@@ -186,10 +103,6 @@ services:
     App\Repository\SettingsRepository:
         arguments:
             $registry: '@doctrine'
-            $settingsCache: '@settings.cache'
-
-    App\Controller\FirstOrderDiscountController:
-        arguments:
             $settingsCache: '@settings.cache'
 
     App\State\HomepageDataProvider:

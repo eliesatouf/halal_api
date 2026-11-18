@@ -6,7 +6,6 @@ namespace App\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Appointment;
-use App\Service\LoyaltyService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -16,7 +15,6 @@ class CompleteAppointmentProcessor implements ProcessorInterface
         private ProcessorInterface $persistProcessor, // Use the default processor
         private EntityManagerInterface $em,
         private Security $security,
-        private LoyaltyService $loyaltyService
     ) {}
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Appointment
@@ -39,13 +37,7 @@ class CompleteAppointmentProcessor implements ProcessorInterface
         
         // Use the default processor to persist changes
         $appointment = $this->persistProcessor->process($appointment, $operation, $uriVariables, $context);
-        
-        // Check for new rewards AFTER persistence
-        $this->loyaltyService->checkAndCreateRewards($customer);
 
-        if ($appointment->getAppliedReward()) {
-            $this->loyaltyService->useReward($appointment->getAppliedReward());
-        }
         
         return $appointment;
     }

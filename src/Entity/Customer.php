@@ -20,7 +20,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Serializer\Filter\PropertyFilter;
 
 #[ApiResource(
@@ -74,12 +73,6 @@ class Customer
     #[Groups(['customer:read'])]
     private ?string $status = null;
 
-    /**
-     * @var Collection<int, Order>
-     */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'customer')]
-    #[Groups(['customer:read'])]
-    private Collection $order;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['customer:read'])]
@@ -97,26 +90,6 @@ class Customer
     #[Groups(['customer:read','customer:write'])]
     private ?string $telephone = null;
 
-    #[ORM\OneToOne(mappedBy: 'customer', cascade: ['persist', 'remove'] , fetch: 'EAGER')]
-    #[Groups(['customer:read'])]
-    #[MaxDepth(1)]
-    private ?FirstOrder $firstOrder = null;
-
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['customer:read','customer:write'])]
-    private ?string $loyverseCustomerId = null;
-
-    public function getLoyverseCustomerId(): ?string
-    {
-        return $this->loyverseCustomerId;
-    }
-
-    public function setLoyverseCustomerId(?string $loyverseCustomerId): static
-    {
-        $this->loyverseCustomerId = $loyverseCustomerId;
-        return $this;
-    }
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -128,7 +101,6 @@ class Customer
 
     public function __construct()
     {
-        $this->order = new ArrayCollection();
         $this->loyaltyRewards = new ArrayCollection();
 
     }
@@ -198,35 +170,6 @@ class Customer
         return $this;
     }
 
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getMyorder(): Collection
-    {
-        return $this->order;
-    }
-
-    public function addMyorder(Order $order): static
-    {
-        if (!$this->order->contains($order)) {
-            $this->order->add($order);
-            $order->setCustomer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMyorder(Order $order): static
-    {
-        if ($this->order->removeElement($order)) {
-            // set the owning side to null (unless already changed)
-            if ($order->getCustomer() === $this) {
-                $order->setCustomer(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getCreatedOn(): ?\DateTime
     {
@@ -286,87 +229,7 @@ class Customer
         return $this;
     }
 
-    public function getFirstOrder(): ?FirstOrder
-    {
-        return $this->firstOrder;
-    }
 
-    public function setFirstOrder(?FirstOrder $firstOrder): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($firstOrder === null && $this->firstOrder !== null) {
-            $this->firstOrder->setCustomer(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($firstOrder !== null && $firstOrder->getCustomer() !== $this) {
-            $firstOrder->setCustomer($this);
-        }
-
-        $this->firstOrder = $firstOrder;
-
-        return $this;
-    }
-
-    public function getFirstOrderSafe()
-    {
-        //$firstOrder = $this->firstOrder->getDiscountValue();
-        $firstOrder = $this->firstOrder->getDiscountValue();
-        
-        return $firstOrder;
-    }
-
-     ### loyalty ####
-    #[ORM\Column(options: ['default' => 0])]
-    #[Groups(['customer:write','appointment:read','appointment:write'])]
-    private ?int $visitCount = 0;
-
-    #[Groups(['customer:read','appointment:read','appointment:write'])]
-    public function getVisitCount(): ?int { return $this->visitCount; }
-    public function setVisitCount(int $visitCount): static { $this->visitCount = $visitCount; return $this; }
-
-    public function incrementVisitCount(): static { $this->visitCount++; return $this; }
-
-    /**
-     * @return array<LoyaltyReward>
-     */
-    #[Groups(['customer:read', 'loyalty:read'])]
-    public function getActiveRewards(): array
-    {
-        return $this->loyaltyRewards->filter(function(LoyaltyReward $reward) {
-            return $reward->getStatus() === 'active' 
-                && $reward->getExpiresAt() > new \DateTime();
-        })->toArray();
-    }
-
-    #[ORM\OneToMany(targetEntity: LoyaltyReward::class, mappedBy: 'customer')]
-    #[Groups(['customer:read', 'loyalty:read'])]
-    private Collection $loyaltyRewards;
-
-    /**
-     * @return Collection<int, LoyaltyReward>
-     */
-    public function getLoyaltyRewards(): Collection
-    {
-        return $this->loyaltyRewards;
-    }
-
-    public function hasUsedFirstOrderDiscount(): bool
-    {
-        $firstOrder = $this->getFirstOrder();
-        return $firstOrder && $firstOrder->getDiscountApplied();
-    }
-
-    public function getFirstOrderDiscountPercentage(): ?int
-    {
-        $firstOrder = $this->getFirstOrder();
-        if ($firstOrder && $firstOrder->getDiscountApplied()) {
-            // The discount value is stored as the actual amount, not percentage
-            // We need to calculate percentage based on order amount
-            return null; // Can't determine percentage without order context
-        }
-        return null;
-    }
 
     
 }

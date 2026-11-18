@@ -1,0 +1,13 @@
+# config/packages/rate_limiter.yaml
+framework:
+    rate_limiter:
+        # Public form: 5 submissions per IP per minute, 30 per hour
+        inquiry_public_minute:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '1 minute'
+
+        inquiry_public_hour:
+            policy: 'sliding_window'
+            limit: 30
+            interval: '1 hour'
