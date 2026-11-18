@@ -28,8 +28,8 @@ final class TestController extends AbstractController
         $firstOrderEnabled = $settingsService->getBool('FIRST_ORDER_ENABLED', false);
 
 
-        return $this->json([
-                    'firstOrderEnabled' => $firstOrderEnabled]);
+        // return $this->json([
+        //             'firstOrderEnabled' => $firstOrderEnabled]);
 
 
         // $entitiesClassNames = $entityManager->getConfiguration()->getMetadataDriverImpl();
