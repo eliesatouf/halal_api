@@ -20,12 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         // Public: form submission — no auth
         new Post(
-            uriTemplate: '/inquiries/{id}/convert-to-exhibitor',
-            input: false, // no body needed; everything comes from inquiry + optional defaults
-            output: Exhibitor::class,
-            processor: \App\State\ConvertInquiryToExhibitorProcessor::class,
-            normalizationContext: ['groups' => ['exhibitor:read']],
-            security: 'true',
+            uriTemplate: '/inquiries',
+            denormalizationContext: ['groups' => ['inquiry:create']],
+            normalizationContext: ['groups' => ['inquiry:read']],
+            security: 'true',  // public — no auth required
+            validationContext: ['groups' => ['inquiry:create']],
         ),
         // Admin list — filterable
         new GetCollection(
