@@ -15,6 +15,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\State\ConvertInquiryToExhibitorProcessor;
 
 #[ApiResource(
     operations: [
@@ -23,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/inquiries',
             denormalizationContext: ['groups' => ['inquiry:create']],
             normalizationContext: ['groups' => ['inquiry:read']],
-            security: 'true',  // public — no auth required
+            security: 'true',
             validationContext: ['groups' => ['inquiry:create']],
         ),
         // Admin list — filterable
@@ -42,6 +43,15 @@ use Symfony\Component\Validator\Constraints as Assert;
             normalizationContext: ['groups' => ['inquiry:read', 'user:list']],
             security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")',
             validationContext: ['groups' => ['inquiry:update']]
+        ),
+        // Convert inquiry → exhibitor
+        new Post(
+            uriTemplate: '/inquiries/{id}/convert-to-exhibitor',
+            input: false,
+            output: Exhibitor::class,
+            processor: ConvertInquiryToExhibitorProcessor::class,
+            normalizationContext: ['groups' => ['exhibitor:read']],
+            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")',
         ),
     ]
 )]
@@ -137,7 +147,7 @@ class Inquiry
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['inquiry:read', 'inquiry:list',   ])]
+    #[Groups(['inquiry:read', 'inquiry:list', 'inquiry:update'])]
     private ?User $assignedTo = null;
 
     #[ORM\Column(nullable: true)]
