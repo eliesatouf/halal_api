@@ -25,7 +25,7 @@ final class TestController extends AbstractController
         UserPasswordHasherInterface $passwordHasher, SettingsService $settingsService): Response
     {
         
-        $firstOrderEnabled = $settingsService->getBool('FIRST_ORDER_ENABLED', false);
+        //$firstOrderEnabled = $settingsService->getBool('FIRST_ORDER_ENABLED', false);
 
 
         // return $this->json([

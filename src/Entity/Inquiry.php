@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             output: Exhibitor::class,
             processor: \App\State\ConvertInquiryToExhibitorProcessor::class,
             normalizationContext: ['groups' => ['exhibitor:read']],
-            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")',
+            security: 'true',
         ),
         // Admin list — filterable
         new GetCollection(
